@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const safeRole = ["user", "ngo"].includes(role) ? role : "user";
+    const safeRole = ["user", "ngo", "admin"].includes(role) ? role : "user";
     const { id, uuid } = await User.create({ name, email, hashedPassword, role: safeRole, phone, location });
 
     const token = generateToken(id, safeRole);

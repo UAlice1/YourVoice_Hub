@@ -9,7 +9,7 @@ const registerValidation = [
   body("name").trim().notEmpty().withMessage("Name is required.").isLength({ max: 100 }),
   body("email").isEmail().withMessage("Valid email is required.").normalizeEmail(),
   body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
-  body("role").optional().isIn(["user", "ngo"]).withMessage("Role must be 'user' or 'ngo'."),
+  body("role").optional().isIn(["user", "ngo", "admin"]).withMessage("Role must be 'user', 'ngo', or 'admin'."),
 ];
 
 const loginValidation = [
