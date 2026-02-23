@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './Pages/Dashboard';
+import SubmitCase from './Pages/SubmitCase/SubmitCase';
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
@@ -28,6 +29,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/submit-case" element={<SubmitCase />} />
 
               {/* NGO dashboard */}
   <Route
