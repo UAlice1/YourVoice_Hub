@@ -40,4 +40,14 @@ export const authAPI = {
   getProfile: () => api.get('/auth/me'),
 };
 
+// ✅ Added ngoAPI
+export const ngoAPI = {
+  getCases: (params) => api.get('/ngo/cases', { params }),
+  getNotifications: () => api.get('/ngo/notifications'),
+  updateNotification: (id, data) => api.put(`/ngo/notifications/${id}`, data),
+  getReports: () => api.get('/ngo/reports'),
+  getProfile: () => api.get('/ngo/profile'),
+  updateProfile: (data) => api.put('/ngo/profile', data),
+};
+
 export default api;
