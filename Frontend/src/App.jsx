@@ -9,6 +9,7 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
 import NgoDashboard from './Pages/ngo/NgoDashboard';
+import AiSupportChat from "./Pages/AiSupportChat";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<AuthPage />} />
               <Route path="/Register" element={<AuthPage />} />
+            
               <Route
                 path="/dashboard"
                 element={
@@ -30,16 +32,16 @@ function App() {
                 }
               />
               <Route path="/submit-case" element={<SubmitCase />} />
-
+              <Route path="/AiSupportChat" element={<AiSupportChat />} />
               {/* NGO dashboard */}
-  <Route
-    path="/ngo"
-    element={
-      <ProtectedRoute allowedRoles={['ngo']}>
-        <NgoDashboard />
-      </ProtectedRoute>
-    }
-  />
+              <Route
+                path="/ngo"
+                element={
+                  <ProtectedRoute allowedRoles={['ngo']}>
+                    <NgoDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

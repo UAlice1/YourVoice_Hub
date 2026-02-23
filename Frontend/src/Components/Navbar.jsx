@@ -11,7 +11,7 @@ const Navbar = () => {
   const navLinks = [
     { label: "Home", path: "/" },
     { label: "Dashboard", path: "/dashboard" },
-    { label: "AI Support", path: "/ai-support" },
+    { label: "AI Support", path: "/AiSupportChat" },
     { label: "Submit Case", path: "/submit-case" },
     { label: "NGO Portal", path: "/ngo" },
   ];
