@@ -9,6 +9,7 @@ const PRIMARY   = "#2dd4bf";   // teal accent — single accent color
 const DARK      = "#0a1628";   // rich navy dark
 const DARK2     = "#0f1f38";   // slightly lighter navy
 
+
 const team = [
   {
     name: "Alice Umubyeyi",
