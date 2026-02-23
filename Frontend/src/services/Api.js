@@ -40,7 +40,7 @@ export const authAPI = {
   getProfile: () => api.get('/auth/me'),
 };
 
-// ✅ Added ngoAPI
+// ✅ NGO API
 export const ngoAPI = {
   getCases: (params) => api.get('/ngo/cases', { params }),
   getNotifications: () => api.get('/ngo/notifications'),
@@ -48,6 +48,28 @@ export const ngoAPI = {
   getReports: () => api.get('/ngo/reports'),
   getProfile: () => api.get('/ngo/profile'),
   updateProfile: (data) => api.put('/ngo/profile', data),
+};
+
+// ✅ Cases API (NEW)
+export const casesAPI = {
+  // Submit new case (with optional files)
+  submitCase: (formData) =>
+    api.post('/cases', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
+  // Get logged-in user's cases (supports pagination + filters)
+  getUserCases: (params) => api.get('/cases', { params }),
+
+  // Get single case by UUID
+  getCaseByUuid: (uuid) => api.get(`/cases/${uuid}`),
+
+  // Update case status
+  updateCaseStatus: (uuid, status) =>
+    api.put(`/cases/${uuid}/status`, { status }),
+
+  // Delete case
+  deleteCase: (uuid) => api.delete(`/cases/${uuid}`),
 };
 
 export default api;
