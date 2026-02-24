@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import AuthPage from './pages/AuthPage';
+import AuthPage from './Pages/Authpage';
 import Dashboard from './Pages/Dashboard';
 import SubmitCase from './Pages/SubmitCase/SubmitCase';
 import Navbar from './Components/Navbar';
@@ -10,6 +10,8 @@ import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
 import NgoDashboard from './Pages/ngo/NgoDashboard';
 import AiSupportChat from "./Pages/AiSupportChat";
+import Cases from "./Pages/Cases";
+
 
 function App() {
   return (
@@ -30,6 +32,13 @@ function App() {
                     <Dashboard />
                   </ProtectedRoute>
                 }
+              />
+              <Route path="/cases"
+               element={
+               <ProtectedRoute>
+                <Cases/>
+                </ProtectedRoute>
+                } 
               />
               <Route path="/submit-case" element={<SubmitCase />} />
               <Route path="/AiSupportChat" element={<AiSupportChat />} />
