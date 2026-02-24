@@ -9,6 +9,7 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
 import NgoDashboard from './Pages/ngo/NgoDashboard';
+import Reports from './Pages/Reports';
 
 function App() {
   return (
@@ -40,6 +41,15 @@ function App() {
       </ProtectedRoute>
     }
   />
+              {/* Reports */}
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute allowedRoles={['ngo', 'admin']}>
+                    <Reports />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
