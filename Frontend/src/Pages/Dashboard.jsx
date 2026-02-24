@@ -79,11 +79,15 @@ const Dashboard = () => {
             <p className="text-gray-500 mt-1 text-sm">Here is your personal support overview.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <button 
+             onClick={() => navigate('/AiSupportChat')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium rounded-lg transition-colors">
               <ChatIcon /> Chat with AI
             </button>
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors">
-              <FileIcon /> New Case
+            <button 
+              onClick={() => navigate('/submit-case')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors">
+              <FileIcon /> New Cases
             </button>
           </div>
         </div>
@@ -102,7 +106,9 @@ const Dashboard = () => {
           </div>
 
           {/* Pending Cases */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div 
+           onClick={() => navigate('/cases')}
+          className="bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50  cursor-pointer">
             <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
               <PendingFileIcon />
               Pending Cases
