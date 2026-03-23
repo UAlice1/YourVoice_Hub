@@ -1,253 +1,228 @@
 import { useState, useRef, useEffect } from "react";
 
-// ─── QUICK CHIPS ─────────────────────────────────────────────────────────────
 const QUICK_CHIPS = [
-  { label: "😔 Feeling anxious",   text: "I have been feeling very anxious lately and I don't know how to manage it." },
-  { label: "😢 Feeling sad",       text: "I feel very sad and I don't understand why." },
-  { label: "😴 Can't sleep",       text: "I can't sleep well. My mind won't stop and I lie awake every night." },
-  { label: "💔 Relationship pain", text: "I am going through relationship pain and heartbreak." },
-  { label: "😠 Anger & stress",    text: "I feel angry and very stressed all the time and I can't control it." },
-  { label: "😔 Feeling lonely",    text: "I feel very lonely and isolated from everyone around me." },
-  { label: "🧠 Low self-esteem",   text: "I struggle with low self-esteem and confidence. I don't feel good enough." },
-  { label: "😰 Trauma & fear",     text: "I am dealing with trauma and fear from things that happened in my past." },
+  { label: "Feeling anxious",   text: "I have been feeling very anxious lately and I don't know how to manage it." },
+  { label: "Feeling sad",       text: "I feel very sad and I don't understand why." },
+  { label: "Can't sleep",       text: "I can't sleep well. My mind won't stop and I lie awake every night." },
+  { label: "Relationship pain", text: "I am going through relationship pain and heartbreak." },
+  { label: "Anger & stress",    text: "I feel angry and very stressed all the time and I can't control it." },
+  { label: "Feeling lonely",    text: "I feel very lonely and isolated from everyone around me." },
+  { label: "Low self-esteem",   text: "I struggle with low self-esteem and confidence. I don't feel good enough." },
+  { label: "Trauma & fear",     text: "I am dealing with trauma and fear from things that happened in my past." },
 ];
 
-const MOODS = [
-  { emoji: "😔", label: "Low" },
-  { emoji: "😟", label: "Anxious" },
-  { emoji: "😤", label: "Overwhelmed" },
-  { emoji: "😐", label: "Okay" },
-  { emoji: "😊", label: "Alright" },
-];
+const MOODS = ["Low", "Anxious", "Overwhelmed", "Okay", "Alright"];
 
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function getTime() {
   return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 }
 
-function getDate() {
-  return new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric", year: "numeric",
-  });
-}
-
-// ─── TYPING INDICATOR ────────────────────────────────────────────────────────
 function TypingDots() {
   return (
-    <div className="flex items-end gap-2.5">
-      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0"
-        style={{ background: "linear-gradient(135deg,#00a389,#007d6a)" }}>
-        🤖
-      </div>
-      <div className="flex gap-1.5 items-center px-4 py-3.5 rounded-[18px] rounded-bl-[4px] border"
-        style={{ background: "#f0faf8", borderColor: "rgba(0,163,137,0.13)" }}>
-        {[0, 1, 2].map(i => (
-          <span key={i} className="block w-1.5 h-1.5 rounded-full"
-            style={{
-              background: "#00a389",
-              animation: `aminaBlink 1.3s infinite ${i * 0.22}s`,
-            }} />
-        ))}
-      </div>
+    <div style={{ display: "flex", gap: 5, alignItems: "center", padding: "4px 0" }}>
+      {[0, 1, 2].map(i => (
+        <span key={i} style={{
+          display: "block", width: 7, height: 7, borderRadius: "50%",
+          background: "#8e8ea0",
+          animation: `blink 1.3s infinite ${i * 0.22}s`,
+        }} />
+      ))}
     </div>
   );
 }
 
-// ─── MESSAGE BUBBLE ──────────────────────────────────────────────────────────
 function MessageBubble({ msg }) {
   const isUser = msg.role === "user";
   return (
-    <div className={`flex gap-2.5 items-end ${isUser ? "flex-row-reverse" : ""}`}
-      style={{ animation: "aminaMsgIn 0.28s ease both" }}>
-      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0"
-        style={{ background: "linear-gradient(135deg,#00a389,#007d6a)" }}>
-        {isUser ? "👤" : "🤖"}
+    <div style={{
+      display: "flex",
+      gap: 14,
+      padding: "18px 0",
+      borderBottom: "1px solid rgba(255,255,255,0.04)",
+      animation: "msgIn 0.2s ease both",
+    }}>
+      {/* Avatar */}
+      <div style={{
+        width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
+        background: isUser ? "#19c37d" : "#ab68ff",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        marginTop: 2,
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", letterSpacing: -0.3 }}>
+          {isUser ? "Y" : "A"}
+        </span>
       </div>
-      <div className={`flex flex-col gap-1 max-w-[74%] ${isUser ? "items-end" : ""}`}>
-        <div className={`px-4 py-3 text-[14.5px] leading-relaxed ${
-          isUser
-            ? "text-white rounded-[18px] rounded-br-[4px]"
-            : "rounded-[18px] rounded-bl-[4px] border"
-        }`}
-          style={isUser
-            ? { background: "#00a389" }
-            : { background: "#f0faf8", borderColor: "rgba(0,163,137,0.13)", color: "#0d2420" }
-          }>
-          {msg.content.split("\n").map((line, i, arr) => (
-            <span key={i}>
-              {line}
-              {i < arr.length - 1 && <br />}
-            </span>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontSize: 13.5, fontWeight: 600, color: isUser ? "#19c37d" : "#ab68ff",
+          margin: "0 0 6px", letterSpacing: 0.1,
+        }}>
+          {isUser ? "You" : "Amina"}
+        </p>
+        <div style={{
+          fontSize: 15, lineHeight: 1.65, color: "#ececf1",
+          whiteSpace: "pre-wrap", wordBreak: "break-word",
+        }}>
+          {msg.content}
+        </div>
+        <p style={{ fontSize: 11, color: "#565869", margin: "8px 0 0" }}>{msg.time}</p>
+      </div>
+    </div>
+  );
+}
+
+function WelcomeScreen({ onMood, moodUsed, onChip }) {
+  return (
+    <div style={{
+      flex: 1, display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      padding: "0 24px", gap: 32,
+      animation: "fadeUp 0.4s ease both",
+    }}>
+      {/* Logo mark */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+        <div style={{
+          width: 64, height: 64, borderRadius: "50%",
+          background: "linear-gradient(135deg, #ab68ff, #19c37d)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"
+              fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <h1 style={{
+            margin: 0, fontSize: 26, fontWeight: 600, color: "#ececf1",
+            fontFamily: "'Sora', sans-serif", letterSpacing: -0.4,
+          }}>
+            Hi, I'm Amina
+          </h1>
+          <p style={{ margin: "8px 0 0", fontSize: 15, color: "#8e8ea0", lineHeight: 1.5 }}>
+            Your confidential AI support counselor at YourVoice Hub
+          </p>
+        </div>
+      </div>
+
+      {/* Mood picker */}
+      {!moodUsed && (
+        <div style={{ width: "100%", maxWidth: 480, textAlign: "center" }}>
+          <p style={{ fontSize: 14, color: "#8e8ea0", marginBottom: 14 }}>How are you feeling right now?</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+            {MOODS.map(m => (
+              <button key={m} onClick={() => onMood(m)} style={{
+                padding: "9px 20px", borderRadius: 999,
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                color: "#ececf1", fontSize: 14, cursor: "pointer",
+                transition: "all 0.16s ease",
+                fontFamily: "inherit",
+              }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(171,104,255,0.15)";
+                  e.currentTarget.style.borderColor = "rgba(171,104,255,0.5)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                }}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Suggestion chips */}
+      <div style={{ width: "100%", maxWidth: 600 }}>
+        <p style={{ fontSize: 13, color: "#565869", marginBottom: 12, textAlign: "center" }}>
+          Or start with a topic
+        </p>
+        <div style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr",
+          gap: 10,
+        }}>
+          {QUICK_CHIPS.slice(0, 6).map(chip => (
+            <button key={chip.label} onClick={() => onChip(chip.text)} style={{
+              padding: "13px 16px", borderRadius: 12,
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#c5c5d2", fontSize: 13.5, cursor: "pointer",
+              textAlign: "left", lineHeight: 1.4,
+              transition: "all 0.16s ease",
+              fontFamily: "inherit",
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+              }}
+            >
+              {chip.label}
+            </button>
           ))}
         </div>
-        <span className="text-[11px] px-1" style={{ color: "#6a9990" }}>{msg.time}</span>
       </div>
     </div>
   );
 }
 
-// ─── CASE SUGGESTION BANNER ──────────────────────────────────────────────────
-function CaseBanner({ onDismiss }) {
-  return (
-    <div className="mx-2 px-4 py-3 rounded-2xl border flex items-center justify-between gap-3"
-      style={{
-        background: "rgba(0,163,137,.07)",
-        borderColor: "rgba(0,163,137,.25)",
-        animation: "aminaMsgIn 0.28s ease both",
-      }}>
-      <p className="text-[13px]" style={{ color: "#0d2420" }}>
-        💬 Would you like to <strong>submit a case</strong> to get support from a professional or NGO?
-      </p>
-      <div className="flex gap-2 flex-shrink-0">
-        <button
-          onClick={() => window.location.href = "/submit-case"}
-          className="px-3 py-1.5 rounded-full text-[12px] text-white"
-          style={{ background: "#00a389" }}>
-          Submit Case
-        </button>
-        <button
-          onClick={onDismiss}
-          className="px-3 py-1.5 rounded-full text-[12px] border"
-          style={{ borderColor: "rgba(0,163,137,.3)", color: "#6a9990" }}>
-          Dismiss
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ─── WELCOME MESSAGE ─────────────────────────────────────────────────────────
-function WelcomeMessage({ onMood, moodUsed }) {
-  return (
-    <div className="flex gap-2.5 items-end" style={{ animation: "aminaMsgIn 0.28s ease both" }}>
-      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0"
-        style={{ background: "linear-gradient(135deg,#00a389,#007d6a)" }}>
-        🤖
-      </div>
-      <div className="flex flex-col gap-1 max-w-[80%]">
-        <div className="px-4 py-3 text-[14.5px] leading-relaxed rounded-[18px] rounded-bl-[4px] border"
-          style={{ background: "#f0faf8", borderColor: "rgba(0,163,137,0.13)", color: "#0d2420" }}>
-          <p>
-            Muraho! I'm{" "}
-            <span className="font-semibold" style={{ color: "#00a389" }}>Amina</span>
-            , your personal AI support counselor from YourVoice Rwanda 💚
-          </p>
-          <p className="mt-2">
-            This is a{" "}
-            <span className="font-medium" style={{ color: "#00a389" }}>completely safe, private space</span>
-            . I'm here to truly listen and help you work through whatever you're facing — no judgment, no rush.
-          </p>
-          {!moodUsed && (
-            <>
-              <p className="mt-2 font-semibold">How are you feeling right now?</p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {MOODS.map(m => (
-                  <button key={m.label}
-                    onClick={() => onMood(m)}
-                    className="px-3 py-1.5 rounded-full text-[13px] border transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
-                    style={{
-                      background: "rgba(0,163,137,0.06)",
-                      borderColor: "rgba(0,163,137,0.2)",
-                      color: "#2e6259",
-                    }}>
-                    {m.emoji} {m.label}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-        <span className="text-[11px] px-1" style={{ color: "#6a9990" }}>{getTime()}</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function AiSupportChat() {
-  const [messages, setMessages]             = useState([]);
-  const [input, setInput]                   = useState("");
-  const [loading, setLoading]               = useState(false);
-  const [moodUsed, setMoodUsed]             = useState(false);
-  const [history, setHistory]               = useState([]); // only {role, content} for API
-  const [sessionId]                         = useState(() => crypto.randomUUID());
-  const [showCaseBanner, setShowCaseBanner] = useState(false);
-  const messagesEndRef                       = useRef(null);
-  const textareaRef                          = useRef(null);
+  const [messages, setMessages]   = useState([]);
+  const [input, setInput]         = useState("");
+  const [loading, setLoading]     = useState(false);
+  const [moodUsed, setMoodUsed]   = useState(false);
+  const [history, setHistory]     = useState([]);
+  const [sessionId]               = useState(() => crypto.randomUUID());
+  const messagesEndRef            = useRef(null);
+  const textareaRef               = useRef(null);
 
-  // Vite environment variable (must be prefixed with VITE_ in .env file)
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const hasMessages = messages.length > 0;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
+  const resizeTextarea = () => {
     const el = textareaRef.current;
     if (el) {
       el.style.height = "auto";
-      el.style.height = Math.min(el.scrollHeight, 130) + "px";
+      el.style.height = Math.min(el.scrollHeight, 160) + "px";
     }
   };
 
-  // ── Call backend (/api/ai/chat) ─────────────────────────────────────────────
   const callAmina = async (userText, updatedHistory) => {
     setLoading(true);
-
     try {
       const res = await fetch(`${API_URL}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userText,
-          session_id: sessionId,
-          history: updatedHistory,
-        }),
+        body: JSON.stringify({ message: userText, session_id: sessionId, history: updatedHistory }),
       });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || `Server error: ${res.status}`);
-      }
-
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
-
-    const reply = data?.data?.response || data?.response;
-
-      if (!reply || typeof reply !== 'string') {
-        throw new Error("No valid reply received from Amina");
-      }
-
-      // Add AI response to chat
+      const reply = data?.data?.response || data?.response;
+      if (!reply || typeof reply !== "string") throw new Error("No valid reply");
       const assistantMsg = { role: "assistant", content: reply, time: getTime() };
       setHistory(prev => [...prev, { role: "assistant", content: reply }]);
       setMessages(prev => [...prev, assistantMsg]);
-
-      // Handle case suggestion and crisis detection
-      if (data?.suggest_case_submission) {
-        setShowCaseBanner(true);
-      }
-
       if (data?.intent === "crisis") {
         setMessages(prev => [...prev, {
           role: "assistant",
-          content: "🚨 If you are in immediate danger, please call Isange One Stop Center at **116** right now (toll-free in Rwanda). You are not alone 💚",
+          content: "If you are in immediate danger, please call the Isange One Stop Center at 116 (toll-free in Rwanda). You are not alone.",
           time: getTime(),
         }]);
       }
-
     } catch (err) {
-      console.error("Chat error:", err);
-
-      let errorMsg = "I'm having trouble connecting right now. Please try again in a few seconds 💚";
-      if (err.message.includes("No valid reply")) {
-        errorMsg = "Amina replied, but something went wrong showing it. Please try again or rephrase your message.";
-      }
-
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: errorMsg,
+        content: "I'm having trouble connecting right now. Please try again in a few seconds.",
         time: getTime(),
       }]);
     } finally {
@@ -256,209 +231,252 @@ export default function AiSupportChat() {
     }
   };
 
-  // ── Send message ────────────────────────────────────────────────────────────
   const sendMessage = (text = input.trim()) => {
     if (!text || loading) return;
-
     const userMsg = { role: "user", content: text, time: getTime() };
-    const apiHistoryEntry = { role: "user", content: text };
-
     setMessages(prev => [...prev, userMsg]);
-    setShowCaseBanner(false);
-
-    const newHistory = [...history, apiHistoryEntry];
+    const newHistory = [...history, { role: "user", content: text }];
     setHistory(newHistory);
-
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-
     callAmina(text, newHistory);
   };
 
   const pickMood = (mood) => {
     setMoodUsed(true);
-    sendMessage(`I am feeling ${mood.emoji} ${mood.label} right now.`);
+    sendMessage(`I am feeling ${mood} right now.`);
   };
 
   const handleKey = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   };
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes aminaPulse {
-          0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,.45); }
-          55%    { box-shadow:0 0 0 5px rgba(34,197,94,0); }
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&display=swap');
+        @keyframes blink {
+          0%,80%,100%{ opacity:.3; transform:scale(1); }
+          40%{ opacity:1; transform:scale(1.25); }
         }
-        @keyframes aminaBlink {
-          0%,80%,100%{ opacity:.3; transform:scale(1);   }
-          40%         { opacity:1;  transform:scale(1.25);}
+        @keyframes msgIn {
+          from{ opacity:0; transform:translateY(4px); }
+          to{ opacity:1; transform:translateY(0); }
         }
-        @keyframes aminaMsgIn {
-          from{ opacity:0; transform:translateY(8px); }
-          to  { opacity:1; transform:translateY(0);   }
+        @keyframes fadeUp {
+          from{ opacity:0; transform:translateY(16px); }
+          to{ opacity:1; transform:translateY(0); }
         }
-        @keyframes aminaFadeUp {
-          from{ opacity:0; transform:translateY(20px); }
-          to  { opacity:1; transform:translateY(0);    }
-        }
-        .amina-chat { font-family:'DM Sans',sans-serif; animation:aminaFadeUp .45s cubic-bezier(.22,1,.36,1) both; }
-        .amina-title{ font-family:'Sora',sans-serif; }
-        .amina-scrollbar::-webkit-scrollbar{ width:4px; }
-        .amina-scrollbar::-webkit-scrollbar-thumb{ background:rgba(0,163,137,.18);border-radius:4px; }
-        .amina-chip:hover{ background:rgba(0,163,137,.09); border-color:#00a389; color:#00a389; transform:translateY(-1px); }
-        .amina-send:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,163,137,.38) !important; }
-        .amina-send:active{ transform:translateY(0); }
-        .amina-send:disabled{ opacity:.5; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
-        .amina-textarea:focus{ border-color:rgba(0,163,137,.45)!important; box-shadow:0 0 0 3px rgba(0,163,137,.09)!important; }
+        * { box-sizing: border-box; }
+        body { margin: 0; }
+        .yvh-root { font-family: 'Sora', -apple-system, sans-serif; }
+        .yvh-scrollbar::-webkit-scrollbar{ width:4px; }
+        .yvh-scrollbar::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.08); border-radius:4px; }
+        .yvh-scrollbar::-webkit-scrollbar-track{ background: transparent; }
+        .yvh-input:focus{ outline: none; border-color: rgba(255,255,255,0.2) !important; box-shadow: 0 0 0 1px rgba(255,255,255,0.1) !important; }
+        .yvh-send:hover:not(:disabled){ background: rgba(255,255,255,0.15) !important; }
+        .yvh-send:disabled{ opacity: 0.3; cursor: not-allowed; }
+        .yvh-chip-scroll::-webkit-scrollbar{ display:none; }
       `}</style>
 
-      <div className="min-h-screen flex items-center justify-center p-5"
-        style={{
-          background: "#f4faf9",
-          backgroundImage: `
-            radial-gradient(ellipse 55% 45% at 5% 0%, rgba(0,163,137,.09) 0%, transparent 65%),
-            radial-gradient(ellipse 40% 40% at 95% 100%, rgba(201,125,10,.07) 0%, transparent 60%)
-          `,
-        }}>
+      <div className="yvh-root" style={{
+        minHeight: "100vh", background: "#212121",
+        display: "flex", flexDirection: "column",
+      }}>
+        {/* Sidebar-like left rail */}
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-        <div className="amina-chat w-full flex flex-col overflow-hidden rounded-[28px]"
-          style={{
-            maxWidth: 800,
-            height: "90vh",
-            maxHeight: 860,
-            background: "white",
-            border: "1px solid rgba(0,163,137,.15)",
-            boxShadow: "0 2px 4px rgba(0,163,137,.05), 0 20px 60px rgba(0,100,80,.10)",
+          {/* Left sidebar */}
+          <div style={{
+            width: 260, background: "#171717", flexShrink: 0,
+            display: "flex", flexDirection: "column", borderRight: "1px solid rgba(255,255,255,0.06)",
           }}>
-
-          {/* HEADER */}
-          <div className="flex items-center gap-3.5 px-6 py-4 flex-shrink-0 border-b"
-            style={{
-              borderColor: "rgba(0,163,137,.15)",
-              background: "linear-gradient(to right, rgba(0,163,137,.05), transparent)",
-            }}>
-            <div className="relative flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl"
-              style={{
-                background: "linear-gradient(135deg,#00a389,#007d6a)",
-                boxShadow: "0 0 0 3px rgba(0,163,137,.15)",
-              }}>
-              🤖
-              <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"
-                style={{ animation: "aminaPulse 2.2s infinite" }} />
-            </div>
-            <div className="flex-1">
-              <p className="amina-title text-[15px] font-semibold" style={{ color: "#0d2420" }}>
-                Amina — YourVoice AI Counselor
-              </p>
-              <p className="text-[12px] mt-0.5 flex items-center gap-1.5" style={{ color: "#00a389" }}>
-                ● Online
-                <span style={{ color: "#6a9990" }}>· Confidential & Secure</span>
-              </p>
-            </div>
-            <div className="flex gap-2">
-              {["🔒 Private", "💬 AI‑Powered"].map(b => (
-                <span key={b} className="text-[11px] px-3 py-1 rounded-full border"
-                  style={{
-                    background: "rgba(0,163,137,.07)",
-                    borderColor: "rgba(0,163,137,.2)",
-                    color: "#00a389",
-                  }}>
-                  {b}
+            {/* Logo */}
+            <div style={{ padding: "20px 16px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: "linear-gradient(135deg, #ab68ff, #19c37d)",
+                  flexShrink: 0,
+                }} />
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#ececf1", letterSpacing: -0.2 }}>
+                  YourVoice Hub
                 </span>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* QUICK CHIPS */}
-          <div className="flex gap-2 px-5 py-3 overflow-x-auto flex-shrink-0 border-b"
-            style={{ borderColor: "rgba(0,163,137,.15)", scrollbarWidth: "none" }}>
-            {QUICK_CHIPS.map(chip => (
-              <button key={chip.label}
-                disabled={loading}
-                onClick={() => sendMessage(chip.text)}
-                className="amina-chip flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12.5px] border transition-all duration-200 cursor-pointer disabled:opacity-50"
-                style={{
-                  background: "transparent",
-                  borderColor: "rgba(0,163,137,.15)",
-                  color: "#6a9990",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>
-                {chip.label}
+            {/* New chat */}
+            <div style={{ padding: "12px 8px" }}>
+              <button onClick={() => { setMessages([]); setHistory([]); setMoodUsed(false); }} style={{
+                width: "100%", display: "flex", alignItems: "center", gap: 10,
+                padding: "10px 12px", borderRadius: 8, border: "none",
+                background: "transparent", color: "#8e8ea0",
+                fontSize: 13.5, cursor: "pointer", transition: "all 0.15s",
+                fontFamily: "inherit",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#ececf1"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#8e8ea0"; }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+                New session
               </button>
-            ))}
-          </div>
-
-          {/* MESSAGES AREA */}
-          <div className="amina-scrollbar flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-3.5">
-            <div className="flex items-center gap-2.5 text-[11px]" style={{ color: "#6a9990" }}>
-              <span className="flex-1 h-px" style={{ background: "rgba(0,163,137,.15)" }} />
-              Today · {getDate()}
-              <span className="flex-1 h-px" style={{ background: "rgba(0,163,137,.15)" }} />
             </div>
 
-            <WelcomeMessage onMood={pickMood} moodUsed={moodUsed} />
+            {/* Active status */}
+            <div style={{ padding: "0 8px", flex: 1 }}>
+              {hasMessages && (
+                <div style={{
+                  padding: "8px 12px", borderRadius: 8,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}>
+                  <p style={{ margin: 0, fontSize: 12, color: "#565869" }}>Current session</p>
+                  <p style={{ margin: "2px 0 0", fontSize: 13, color: "#ececf1" }}>Active conversation</p>
+                </div>
+              )}
+            </div>
 
-            {messages.map((msg, i) => (
-              <MessageBubble key={i} msg={msg} />
-            ))}
-
-            {showCaseBanner && <CaseBanner onDismiss={() => setShowCaseBanner(false)} />}
-
-            {loading && <TypingDots />}
-            <div ref={messagesEndRef} />
+            {/* Bottom info */}
+            <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: "#19c37d",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>Y</span>
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: 12.5, color: "#ececf1", fontWeight: 500 }}>Anonymous user</p>
+                  <p style={{ margin: 0, fontSize: 11, color: "#565869" }}>
+                    <span style={{ color: "#19c37d" }}>●</span> Private & encrypted
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* INPUT AREA */}
-          <div className="flex-shrink-0 px-4 pt-3 pb-4 border-t"
-            style={{
-              borderColor: "rgba(0,163,137,.15)",
-              background: "rgba(240,250,248,.7)",
+          {/* Main area */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+            {/* Messages or welcome */}
+            <div className="yvh-scrollbar" style={{
+              flex: 1, overflowY: "auto",
+              display: "flex", flexDirection: "column",
             }}>
-            <div className="flex gap-2.5 items-end">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={handleKey}
-                disabled={loading}
-                rows={1}
-                placeholder="Share what's on your mind… (English or Kinyarwanda)"
-                className="amina-textarea flex-1 rounded-2xl px-4 py-3 text-[14px] resize-none outline-none border transition-all duration-200 disabled:opacity-60"
-                style={{
-                  background: "white",
-                  borderColor: "rgba(0,163,137,.15)",
-                  color: "#0d2420",
-                  fontFamily: "'DM Sans', sans-serif",
-                  minHeight: 48,
-                  maxHeight: 130,
-                  lineHeight: "1.5",
-                }}
-              />
-              <button
-                onClick={() => sendMessage()}
-                disabled={loading || !input.trim()}
-                className="amina-send w-12 h-12 rounded-[14px] flex items-center justify-center text-lg text-white flex-shrink-0 border-none transition-all duration-200"
-                style={{
-                  background: "linear-gradient(135deg,#00a389,#007d6a)",
-                  boxShadow: "0 4px 14px rgba(0,163,137,.3)",
-                }}>
-                ➤
-              </button>
+              {!hasMessages ? (
+                <WelcomeScreen onMood={pickMood} moodUsed={moodUsed} onChip={sendMessage} />
+              ) : (
+                <div style={{ maxWidth: 720, width: "100%", margin: "0 auto", padding: "24px 24px 8px" }}>
+                  {messages.map((msg, i) => (
+                    <MessageBubble key={i} msg={msg} />
+                  ))}
+                  {loading && (
+                    <div style={{
+                      display: "flex", gap: 14, padding: "18px 0",
+                      borderBottom: "1px solid rgba(255,255,255,0.04)",
+                    }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: "50%",
+                        background: "#ab68ff",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        flexShrink: 0, marginTop: 2,
+                      }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>A</span>
+                      </div>
+                      <div style={{ flex: 1, paddingTop: 6 }}>
+                        <p style={{ fontSize: 13.5, fontWeight: 600, color: "#ab68ff", margin: "0 0 10px" }}>Amina</p>
+                        <TypingDots />
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} style={{ height: 16 }} />
+                </div>
+              )}
             </div>
-            <div className="flex justify-between mt-2 text-[11px]">
-              <span className="flex items-center gap-1" style={{ color: "#00a389" }}>
-                🔒 End-to-end encrypted · Anonymous
-              </span>
-              <span style={{ color: "#6a9990" }}>Enter to send · Shift+Enter for new line</span>
+
+            {/* Input area */}
+            <div style={{
+              padding: hasMessages ? "12px 24px 20px" : "0 24px 28px",
+              maxWidth: 720, width: "100%", margin: "0 auto",
+              alignSelf: "stretch",
+              display: "flex", flexDirection: "column", gap: 10,
+            }}>
+              {/* Quick chips when chatting */}
+              {hasMessages && (
+                <div className="yvh-chip-scroll" style={{
+                  display: "flex", gap: 8, overflowX: "auto",
+                  scrollbarWidth: "none",
+                }}>
+                  {QUICK_CHIPS.map(chip => (
+                    <button key={chip.label} disabled={loading} onClick={() => sendMessage(chip.text)} style={{
+                      flexShrink: 0, padding: "6px 14px", borderRadius: 999,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "#8e8ea0", fontSize: 12.5, cursor: "pointer",
+                      transition: "all 0.15s", whiteSpace: "nowrap",
+                      fontFamily: "inherit",
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.color = "#ececf1"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = "#8e8ea0"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Input box */}
+              <div style={{
+                display: "flex", alignItems: "flex-end", gap: 10,
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 16, padding: "12px 14px",
+                transition: "border-color 0.15s",
+              }}>
+                <textarea
+                  ref={textareaRef}
+                  className="yvh-input"
+                  value={input}
+                  onChange={e => { setInput(e.target.value); resizeTextarea(); }}
+                  onKeyDown={handleKey}
+                  disabled={loading}
+                  rows={1}
+                  placeholder="Share what's on your mind — English or Kinyarwanda"
+                  style={{
+                    flex: 1, background: "none", border: "none", outline: "none",
+                    color: "#ececf1", fontSize: 15, lineHeight: 1.6,
+                    resize: "none", fontFamily: "inherit",
+                    minHeight: 24, maxHeight: 160,
+                  }}
+                />
+                <button
+                  className="yvh-send"
+                  onClick={() => sendMessage()}
+                  disabled={loading || !input.trim()}
+                  style={{
+                    width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                    background: input.trim() && !loading ? "rgba(255,255,255,0.12)" : "transparent",
+                    border: "none", cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z"
+                      stroke={input.trim() && !loading ? "#ececf1" : "#565869"}
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              <p style={{ fontSize: 11.5, color: "#565869", textAlign: "center", margin: 0 }}>
+                End-to-end encrypted · Anonymous session · Enter to send · Shift+Enter for new line
+              </p>
             </div>
           </div>
-
         </div>
       </div>
     </>
