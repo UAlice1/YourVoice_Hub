@@ -1,12 +1,13 @@
-const express = require("express");
+// routes/ai.js  — full corrected example
+const express = require('express');
 const router = express.Router();
-const { protect } = require("../middleware/auth");
-const { chat, getChatHistory, getSessionMessages } = require("../controllers/aiController");
 
-router.use(protect);
+const { chat } = require('../controllers/aiController');  // ← correct relative path
 
-router.post("/chat", chat);
-router.get("/history", getChatHistory);
-router.get("/sessions/:session_id", getSessionMessages);
+// Your POST /chat route (this should be around line 10)
+router.post('/chat', chat);
+
+// Optional: add more AI-related routes later
+// router.get('/history', getHistory); etc.
 
 module.exports = router;

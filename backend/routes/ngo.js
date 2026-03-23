@@ -1,12 +1,34 @@
-const express = require("express");
+// routes/ngo.js
+const express = require('express');
 const router = express.Router();
-const { protect } = require("../middleware/auth");
-const { chat, getChatHistory, getSessionMessages } = require("../controllers/aiController");
 
-router.use(protect);
+// Import the actual functions from the controller
+// Make sure this path is correct!
+const {
+  getCases,
+  getReports,
+  getDashboardStats,
+  updateCaseStatus,
+  // add more functions here when you implement them
+} = require('../controllers/ngoController');
 
-router.post("/chat", chat);
-router.get("/history", getChatHistory);
-router.get("/sessions/:session_id", getSessionMessages);
+// ── NGO Routes ────────────────────────────────────────────────────────────────
+
+// List cases assigned to / visible for this NGO
+router.get('/cases', getCases);
+
+// Get reports / analytics summary
+router.get('/reports', getReports);
+
+// Quick dashboard overview stats
+router.get('/dashboard', getDashboardStats);
+
+// Update case status (accepted, in-progress, resolved, etc.)
+router.put('/cases/:id', updateCaseStatus);
+
+// ── Future / commented routes (uncomment when ready) ─────────────────────────
+// router.get('/notifications', getNotifications);
+// router.post('/cases/:id/assign', assignCase);
+// router.get('/cases/:id', getCaseById);
 
 module.exports = router;
