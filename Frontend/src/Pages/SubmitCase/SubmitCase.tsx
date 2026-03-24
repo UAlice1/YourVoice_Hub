@@ -1,222 +1,240 @@
-// SubmitCase.tsx
-import { useState } from 'react';
+import { useState } from "react";
+import { casesAPI } from "../../services/Api";
 
 export default function SubmitCase() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const [formData, setFormData] = useState({
+    type: "",
+    description: "",
+    is_anonymous: false,
+  });
+
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleFileChange = (fileList: FileList | null) => {
+    if (!fileList) return;
+    setFiles((prev) => [...prev, ...Array.from(fileList)]);
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.type || !formData.description) {
+      setError("Please fill all required fields.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = new FormData();
+      data.append("type", formData.type);
+      data.append("description", formData.description);
+      data.append("is_anonymous", String(formData.is_anonymous));
+
+      files.forEach((file) => data.append("files", file));
+
+      await casesAPI.submitCase(data);
+
+      setStep(3);
+    } catch (err: any) {
+      setError(
+        err.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-16">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-8">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
 
-        {/* Hero / Trust banner */}
+        {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100 mb-5 shadow-sm">
-            <svg
-              className="w-9 h-9 text-teal-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-bold text-gray-900">
             Secure Case Submission
           </h1>
-
-          <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Your safety is our top priority.<br className="sm:hidden" />
-            All information is <strong className="text-teal-700">end-to-end encrypted</strong> and only accessible to your assigned case worker.
+          <p className="mt-3 text-gray-600">
+            End-to-end encrypted. Only assigned case workers can access your case.
           </p>
         </div>
 
-        {/* Step progress */}
-        <div className="flex justify-center mb-10">
-          <div className="flex items-center gap-4 sm:gap-8">
-            {([1, 2, 3] as const).map((s, idx) => (
-              <div key={s} className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => setStep(s)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 border-2 ${
-                    step === s
-                      ? 'bg-teal-600 text-white border-teal-600 shadow-md scale-110'
-                      : 'bg-white text-gray-500 border-gray-300 hover:border-teal-400 hover:text-teal-600'
-                  }`}
-                  disabled={s > step + 1} // simple forward-only for now
-                >
-                  {s}
-                </button>
-
-                {idx < 2 && (
-                  <div
-                    className={`w-12 sm:w-20 h-0.5 mx-2 sm:mx-4 transition-colors ${
-                      step > s ? 'bg-teal-500' : 'bg-gray-300'
-                    }`}
-                  />
-                )}
+        {/* Step Indicator */}
+        <div className="flex items-center justify-center mb-10">
+          {[1, 2, 3].map((s, index) => (
+            <div key={s} className="flex items-center">
+              <div
+                className={`w-10 h-10 flex items-center justify-center rounded-full font-semibold transition-all duration-300 ${
+                  step === s
+                    ? "bg-teal-600 text-white scale-110 shadow-md"
+                    : step > s
+                    ? "bg-teal-100 text-teal-700"
+                    : "bg-gray-200 text-gray-500"
+                }`}
+              >
+                {s}
               </div>
-            ))}
-          </div>
+
+              {index < 2 && (
+                <div
+                  className={`w-16 h-1 mx-3 transition-all duration-300 ${
+                    step > s ? "bg-teal-500" : "bg-gray-300"
+                  }`}
+                />
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* Card content */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200/70 overflow-hidden transition-all duration-300">
-          {/* Step 1: Case Details */}
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-xl border p-8 transition-all duration-300">
+
+          {/* STEP 1 */}
           {step === 1 && (
-            <div className="p-6 sm:p-8 animate-fade-in">
-              <div className="mb-6">
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
-                  Case Information
-                </h2>
-                <p className="mt-2 text-gray-600">
-                  Share as much detail as you feel safe and comfortable providing.
-                </p>
-              </div>
+            <div className="animate-fade">
+              <h2 className="text-xl font-semibold mb-6">
+                Case Information
+              </h2>
 
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Type of Incident
-                    </label>
-                    <select className="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition">
-                      <option value="">Select type</option>
-                      <option>Gender-Based Violence</option>
-                      <option>Domestic Violence</option>
-                      <option>Sexual Assault / Harassment</option>
-                      <option>Child Protection Concern</option>
-                      <option>Human Trafficking</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Date of Incident
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full h-11 px-4 rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none transition"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Type of Incident *
+                  </label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) =>
+                      setFormData({ ...formData, type: e.target.value })
+                    }
+                    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-400"
+                  >
+                    <option value="">Select type</option>
+                    <option value="mental_health">Mental Health</option>
+                    <option value="abuse">Abuse</option>
+                    <option value="gbv">GBV</option>
+                    <option value="trauma">Trauma</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Description
+                  <label className="block text-sm font-medium mb-2">
+                    Description *
                   </label>
                   <textarea
-                    rows={7}
+                    rows={5}
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        description: e.target.value,
+                      })
+                    }
+                    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-400"
                     placeholder="Describe what happened..."
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none resize-y min-h-[140px] transition"
                   />
                 </div>
-              </div>
 
-              <div className="mt-8 flex justify-end">
-                <button
-                  onClick={() => setStep(2)}
-                  className="px-8 py-3 text-white font-medium rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
-                  style={{ background: "linear-gradient(135deg, #14b8a6, #0891b2)" }}
-                >
-                  Continue to Evidence →
-                </button>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_anonymous}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        is_anonymous: e.target.checked,
+                      })
+                    }
+                  />
+                  Submit anonymously
+                </label>
+
+                {error && (
+                  <p className="text-red-500 text-sm">{error}</p>
+                )}
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setStep(2)}
+                    className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition"
+                  >
+                    Continue →
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Step 2: Evidence Upload */}
+          {/* STEP 2 */}
           {step === 2 && (
-            <div className="p-6 sm:p-8 animate-fade-in">
-              <div className="mb-6">
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
-                  Upload Evidence (Optional)
-                </h2>
-                <p className="mt-2 text-gray-600">
-                  Photos, documents, audio notes — anything that helps tell your story safely.
-                </p>
-              </div>
+            <div className="animate-fade">
+              <h2 className="text-xl font-semibold mb-6">
+                Upload Evidence (Optional)
+              </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-                {[
-                  { icon: '📄', label: 'Document', accept: '.pdf,.doc,.docx' },
-                  { icon: '📸', label: 'Photo', accept: 'image/*' },
-                  { icon: '🎙️', label: 'Audio', accept: 'audio/*' },
-                ].map((item) => (
-                  <label
-                    key={item.label}
-                    className="group flex flex-col items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-xl hover:border-teal-500 hover:bg-teal-50/50 cursor-pointer transition-all duration-200"
-                  >
-                    <span className="text-5xl mb-3 text-gray-500 group-hover:text-teal-600 transition-colors">
-                      {item.icon}
-                    </span>
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-teal-700">
-                      {item.label}
-                    </span>
-                    <input type="file" className="hidden" accept={item.accept} />
-                  </label>
-                ))}
-              </div>
+              <input
+                type="file"
+                multiple
+                onChange={(e) => handleFileChange(e.target.files)}
+                className="mb-4"
+              />
 
-              <div className="p-4 bg-teal-50 border border-teal-100 rounded-lg text-sm text-teal-800 flex items-start gap-3">
-                <span className="text-xl mt-0.5">🔒</span>
-                <p>
-                  <strong>End-to-end encrypted.</strong> Only your assigned case worker can access these files.
-                </p>
-              </div>
+              {files.length > 0 && (
+                <div className="mb-4 text-sm text-gray-600">
+                  {files.length} file(s) selected
+                </div>
+              )}
 
-              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-end">
+              {error && (
+                <p className="text-red-500 text-sm mb-4">{error}</p>
+              )}
+
+              <div className="flex justify-between">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-6 py-3 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+                  className="border px-6 py-2 rounded-lg"
                 >
-                  ← Back
+                  Back
                 </button>
-                <button className="px-10 py-3 text-white font-medium rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200" style={{ background: "linear-gradient(135deg, #14b8a6, #0891b2)" }}>
-                  Submit Securely
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="bg-teal-600 text-white px-6 py-2 rounded-lg disabled:opacity-50"
+                >
+                  {loading ? "Submitting..." : "Submit Securely"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3 placeholder */}
+          {/* STEP 3 */}
           {step === 3 && (
-            <div className="p-8 text-center animate-fade-in">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Review & Confirm
+            <div className="text-center py-10 animate-fade">
+              <div className="text-5xl mb-4">✅</div>
+              <h2 className="text-xl font-semibold">
+                Case Submitted Successfully
               </h2>
-              <p className="text-gray-600 mb-8">
-                You will see a summary of your submission here before final confirmation.
+              <p className="text-gray-600 mt-2">
+                Your case has been received and is being reviewed.
               </p>
-              <div className="text-sm text-gray-500 italic">
-                (Review screen coming soon)
-              </div>
             </div>
           )}
-        </div>
-
-        {/* Footer note */}
-        <div className="mt-12 text-center text-sm text-gray-500">
-          Made with care in Rwanda • <span className="font-medium">YourVoiceHub</span>
         </div>
       </div>
 
-      {/* Simple fade-in animation */}
+      {/* Animation */}
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0); }
+        .animate-fade {
+          animation: fadeIn 0.4s ease-in-out;
         }
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-out forwards;
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </main>
