@@ -15,38 +15,52 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<AuthPage />} />
-              <Route path="/Register" element={<AuthPage />} />
-            
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={['user']}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/submit-case" element={<SubmitCase />} />
-              <Route path="/AiSupportChat" element={<AiSupportChat />} />
-              {/* NGO dashboard */}
-              <Route
-                path="/ngo"
-                element={
-                  <ProtectedRoute allowedRoles={['ngo']}>
-                    <NgoDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <Routes>
+
+          {/* ── AI Support Chat — no navbar or footer ── */}
+          <Route path="/AiSupportChat" element={<AiSupportChat />} />
+
+          {/* ── All other pages — with navbar and footer ── */}
+          <Route
+            path="*"
+            element={
+              <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-1">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/login" element={<AuthPage />} />
+                    <Route path="/Register" element={<AuthPage />} />
+
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute allowedRoles={['user']}>
+                          <Dashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/submit-case" element={<SubmitCase />} />
+
+                    {/* NGO dashboard */}
+                    <Route
+                      path="/ngo"
+                      element={
+                        <ProtectedRoute allowedRoles={['ngo']}>
+                          <NgoDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            }
+          />
+
+        </Routes>
       </Router>
     </AuthProvider>
   );
