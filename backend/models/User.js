@@ -8,7 +8,7 @@ const User = {
     const [result] = await pool.query(
       `INSERT INTO users (uuid, name, email, password, role, phone, location)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [uuid, name, email, hashedPassword, role, phone, location]
+      [uuid, name, email, hashedPassword, role, phone, location]  // ✅ hashedPassword maps to password column
     );
     return { id: result.insertId, uuid };
   },
