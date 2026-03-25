@@ -9,6 +9,7 @@ const {
   getReports,
   getDashboardStats,
   updateCaseStatus,
+  getCaseById,  
   // add more functions here when you implement them
 } = require('../controllers/ngoController');
 
@@ -25,6 +26,7 @@ router.get('/dashboard', getDashboardStats);
 
 // Update case status (accepted, in-progress, resolved, etc.)
 router.put('/cases/:id', updateCaseStatus);
+router.get('/cases/:id', getCaseById);
 
 // ── Future / commented routes (uncomment when ready) ─────────────────────────
 // router.get('/notifications', getNotifications);

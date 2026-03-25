@@ -7,6 +7,7 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -41,6 +42,8 @@ export const ngoAPI = {
   getReports:         ()         => api.get('/ngo/reports'),
   getProfile:         ()         => api.get('/ngo/profile'),
   updateProfile:      (data)     => api.put('/ngo/profile', data),
+  getCaseById:        (id)       => api.get(`/ngo/cases/${id}`), 
+  updateCaseStatus: (id, data) => api.put(`/ngo/cases/${id}`, data),
 };
 
 export const caseAPI = {
