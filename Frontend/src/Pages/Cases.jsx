@@ -6,7 +6,7 @@ import { casesAPI } from "../services/Api";
 // ──────────────────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 10;
 const CASE_TYPES = ["gbv", "abuse", "trauma", "mental_health", "other"];
-const CASE_STATUSES = ["pending", "in-progress", "resolved", "closed"];
+const CASE_STATUSES = ["pending", "in-progress", "resolved", "closed"]; // used in table Actions only
 const DEBUG = false; // set to true to see payload logs in DevTools
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -32,9 +32,7 @@ const statusBadge = (s) => {
   return map[(s || "").toLowerCase()] || map.pending;
 };
 
-const formatType = (t) =>
-  (t || "").toString().replaceAll("_", " ").toUpperCase();
-
+const formatType = (t) => (t || "").toString().replaceAll("_", " ").toUpperCase();
 const formatStatus = (s) => (s || "pending").toString().replace("-", " ");
 
 const formatDate = (iso) =>
@@ -74,8 +72,7 @@ const extractItem = (payload) => {
   if (!payload || typeof payload !== "object") return null;
   if (payload.data && typeof payload.data === "object") return payload.data;
   if (payload.case && typeof payload.case === "object") return payload.case;
-  if (payload.result && typeof payload.result === "object")
-    return extractItem(payload.result);
+  if (payload.result && typeof payload.result === "object") return extractItem(payload.result);
   return payload;
 };
 
@@ -117,10 +114,7 @@ const Cases = () => {
       setHasNext(list.length === PAGE_SIZE);
     } catch (e) {
       if (DEBUG) console.error("[UI] GET /cases error:", e);
-      setRowsError(
-        e?.response?.data?.message ||
-          "Could not load your cases. Please try again later."
-      );
+      setRowsError(e?.response?.data?.message || "Could not load your cases. Please try again later.");
     } finally {
       setLoadingRows(false);
     }
@@ -145,10 +139,7 @@ const Cases = () => {
       setCaseDetails(item || null);
     } catch (e) {
       if (DEBUG) console.error("[UI] GET /cases/:uuid error:", e);
-      setDetailsError(
-        e?.response?.data?.message ||
-          "Failed to load case details. Please try again."
-      );
+      setDetailsError(e?.response?.data?.message || "Failed to load case details. Please try again.");
     } finally {
       setLoadingDetails(false);
     }
@@ -172,17 +163,12 @@ const Cases = () => {
       fetchCases();
       fetchCaseDetails(uuid);
     } catch (e) {
-      alert(
-        e?.response?.data?.message ||
-          "Failed to update status. Please try again."
-      );
+      alert(e?.response?.data?.message || "Failed to update status. Please try again.");
     }
   };
 
   const onDelete = async (uuid) => {
-    const ok = window.confirm(
-      "Are you sure you want to permanently delete this case?"
-    );
+    const ok = window.confirm("Are you sure you want to permanently delete this case?");
     if (!ok) return;
     try {
       await casesAPI.deleteCase(uuid);
@@ -201,20 +187,12 @@ const Cases = () => {
         fetchCases();
       }
     } catch (e) {
-      alert(
-        e?.response?.data?.message || "Failed to delete case. Please try again."
-      );
+      alert(e?.response?.data?.message || "Failed to delete case. Please try again.");
     }
   };
 
-  const isPrevDisabled = useMemo(
-    () => page === 0 || loadingRows,
-    [page, loadingRows]
-  );
-  const isNextDisabled = useMemo(
-    () => !hasNext || loadingRows,
-    [hasNext, loadingRows]
-  );
+  const isPrevDisabled = useMemo(() => page === 0 || loadingRows, [page, loadingRows]);
+  const isNextDisabled = useMemo(() => !hasNext || loadingRows, [hasNext, loadingRows]);
 
   // ────────────────────────────────────────────────────────────────────────────
   // UI
@@ -367,10 +345,7 @@ const Cases = () => {
                     {/* Error */}
                     {!loadingRows && rowsError && (
                       <tr>
-                        <td
-                          colSpan={7}
-                          className="px-4 py-8 text-center text-red-700 bg-red-50"
-                        >
+                        <td colSpan={7} className="px-4 py-8 text-center text-red-700 bg-red-50">
                           {rowsError}
                         </td>
                       </tr>
@@ -379,10 +354,7 @@ const Cases = () => {
                     {/* Empty */}
                     {!loadingRows && !rowsError && rows.length === 0 && (
                       <tr>
-                        <td
-                          colSpan={7}
-                          className="px-4 py-10 text-center text-gray-600"
-                        >
+                        <td colSpan={7} className="px-4 py-10 text-center text-gray-600">
                           No cases found.
                         </td>
                       </tr>
@@ -442,11 +414,11 @@ const Cases = () => {
                                 View
                               </button>
 
+                              {/* User-side status update is unusual; leaving your select intact.
+                                  If you want this read-only too, replace it with the same badge like in details footer. */}
                               <select
                                 value={c.status || "pending"}
-                                onChange={(e) =>
-                                  onUpdateStatus(c.uuid, e.target.value)
-                                }
+                                onChange={(e) => onUpdateStatus(c.uuid, e.target.value)}
                                 className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400"
                               >
                                 {CASE_STATUSES.map((s) => (
@@ -512,9 +484,8 @@ const Cases = () => {
               error={detailsError}
               onCloseMobile={() => setShowMobilePanel(false)}
               showMobile={showMobilePanel}
-              onUpdateStatus={(newStatus) =>
-                selectedUuid && onUpdateStatus(selectedUuid, newStatus)
-              }
+              // NOTE: read-only status in details footer; keeping prop for compatibility (not used now)
+              onUpdateStatus={(newStatus) => selectedUuid && onUpdateStatus(selectedUuid, newStatus)}
               onDelete={() => selectedUuid && onDelete(selectedUuid)}
             />
           </div>
@@ -534,15 +505,13 @@ const CaseDetailsPanel = ({
   error,
   onCloseMobile,
   showMobile,
-  onUpdateStatus,
+  // onUpdateStatus, // not used anymore (read-only footer)
   onDelete,
 }) => {
   const card = (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
       {!uuid ? (
-        <div className="p-10 text-center text-gray-500">
-          Select a case to view details.
-        </div>
+        <div className="p-10 text-center text-gray-500">Select a case to view details.</div>
       ) : loading ? (
         <div className="p-6">
           <div className="animate-pulse space-y-3">
@@ -599,9 +568,7 @@ const CaseDetailsPanel = ({
           {/* Body */}
           <div className="p-6 space-y-5">
             <section>
-              <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                Description
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-800 mb-1">Description</h3>
               <p className="text-gray-700 whitespace-pre-wrap">
                 {details.description || "(no description)"}
               </p>
@@ -609,35 +576,21 @@ const CaseDetailsPanel = ({
 
             <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-xs uppercase tracking-wide text-gray-500">
-                  Submitted
-                </h4>
+                <h4 className="text-xs uppercase tracking-wide text-gray-500">Submitted</h4>
+                <p className="text-sm text-gray-800">{formatDateTime(details.date_submitted)}</p>
+              </div>
+              <div>
+                <h4 className="text-xs uppercase tracking-wide text-gray-500">Last Updated</h4>
+                <p className="text-sm text-gray-800">{formatDateTime(details.updated_at)}</p>
+              </div>
+              <div>
+                <h4 className="text-xs uppercase tracking-wide text-gray-500">Submitted By</h4>
                 <p className="text-sm text-gray-800">
-                  {formatDateTime(details.date_submitted)}
+                  {isTrueish(details.is_anonymous) ? "Anonymous" : details.submitted_by || "—"}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs uppercase tracking-wide text-gray-500">
-                  Last Updated
-                </h4>
-                <p className="text-sm text-gray-800">
-                  {formatDateTime(details.updated_at)}
-                </p>
-              </div>
-              <div>
-                <h4 className="text-xs uppercase tracking-wide text-gray-500">
-                  Submitted By
-                </h4>
-                <p className="text-sm text-gray-800">
-                  {isTrueish(details.is_anonymous)
-                    ? "Anonymous"
-                    : details.submitted_by || "—"}
-                </p>
-              </div>
-              <div>
-                <h4 className="text-xs uppercase tracking-wide text-gray-500">
-                  Anonymous
-                </h4>
+                <h4 className="text-xs uppercase tracking-wide text-gray-500">Anonymous</h4>
                 <p className="text-sm text-gray-800">
                   {isTrueish(details.is_anonymous) ? "Yes" : "No"}
                 </p>
@@ -645,21 +598,17 @@ const CaseDetailsPanel = ({
             </section>
           </div>
 
-          {/* Footer actions */}
+          {/* Footer actions (READ-ONLY STATUS) */}
           <div className="p-6 border-t flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Update status:</label>
-              <select
-                value={details.status || "pending"}
-                onChange={(e) => onUpdateStatus(e.target.value)}
-                className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400"
+              <span className="text-sm text-gray-700">Status:</span>
+              <span
+                className={`px-2.5 py-1 rounded-full text-xs font-medium ${statusBadge(
+                  details.status
+                )}`}
               >
-                {CASE_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s.replace("-", " ")}
-                  </option>
-                ))}
-              </select>
+                {formatStatus(details.status)}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -710,12 +659,7 @@ const CaseDetailsPanel = ({
               className="p-2 rounded-md hover:bg-gray-100"
               aria-label="Close"
             >
-              <svg
-                className="h-5 w-5 text-gray-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -728,4 +672,3 @@ const CaseDetailsPanel = ({
 };
 
 export default Cases;
-``
