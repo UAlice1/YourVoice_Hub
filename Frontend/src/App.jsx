@@ -9,7 +9,9 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
 import NgoDashboard from './Pages/ngo/NgoDashboard';
+import NGOCaseDetails from './Pages/ngo/NgoCaseDetails';
 import AiSupportChat from "./Pages/AiSupportChat";
+import Cases from './Pages/Cases';
 
 function App() {
   return (
@@ -40,7 +42,19 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
+
+                    <Route
+                      path="/cases"
+                      element={
+                        <ProtectedRoute>
+                          <Cases />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     <Route path="/submit-case" element={<SubmitCase />} />
+
+                    <Route path="/ngo/cases/:uuid" element={<NGOCaseDetails />} />
 
                     {/* NGO dashboard */}
                     <Route
