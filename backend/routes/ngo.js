@@ -7,9 +7,11 @@ const router = express.Router();
 const {
   getCases,
   getReports,
+  exportReportsCsv,
   getDashboardStats,
   updateCaseStatus,
   getCaseById,  
+
   // add more functions here when you implement them
 } = require('../controllers/ngoController');
 
@@ -20,6 +22,7 @@ router.get('/cases', getCases);
 
 // Get reports / analytics summary
 router.get('/reports', getReports);
+router.get('/reports/csv', exportReportsCsv);
 
 // Quick dashboard overview stats
 router.get('/dashboard', getDashboardStats);
