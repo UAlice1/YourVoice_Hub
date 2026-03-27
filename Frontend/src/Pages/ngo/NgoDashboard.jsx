@@ -2,32 +2,27 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ngoAPI } from '../../services/Api';
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Config
-// ──────────────────────────────────────────────────────────────────────────────
+
 const PAGE_SIZE = 10;
 const CASE_TYPES = ['gbv', 'abuse', 'trauma', 'mental_health', 'other'];
 const PRIORITIES = ['urgent', 'high', 'medium', 'low'];
 
-// UI filter list can be broad for viewing
+
 const ALL_STATUSES = ['new', 'pending', 'in-progress', 'in_progress', 'reviewed', 'resolved', 'closed'];
 
-// ✅ Only statuses your DB accepts for updates:
+
 const DB_STATUSES = ['pending', 'reviewed', 'referred', 'closed'];
 
-// What users see in the Action dropdown for each DB value
+
 const STATUS_LABELS = {
   pending: 'Pending',
   reviewed: 'Reviewed',
-  referred: 'In Progress', // DB value 'referred' shown as "In Progress"
+  referred: 'In Progress', 
   closed: 'Closed',
 };
 
-const DEBUG = false; // set to true to inspect payloads in DevTools
+const DEBUG = false; 
 
-// ──────────────────────────────────────────────────────────────────────────────
-/** Utilities */
-// ──────────────────────────────────────────────────────────────────────────────
 const extractList = (payload) => {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.data)) return payload.data;
@@ -61,11 +56,11 @@ const priorityBadge = (p) => {
   return map[(p || '').toLowerCase()] || map.medium;
 };
 
-// ── Helpers for status formatting and chips ───────────────────────────────────
+
 const normStatus = (s) =>
   (s || 'pending').toString().replace('_', '-').toLowerCase();
 
-// Color classes for the status chip (tolerates both DB and legacy UI values)
+
 const statusBadge = (sRaw) => {
   const s = normStatus(sRaw);
   const map = {
@@ -75,21 +70,21 @@ const statusBadge = (sRaw) => {
     reviewed: 'bg-purple-100 text-purple-700',
     resolved: 'bg-green-100 text-green-700',
     closed: 'bg-gray-200 text-gray-700',
-    // ✅ DB 'referred' (your "In Progress")
+    
     referred: 'bg-blue-100 text-blue-700',
   };
   return map[s] || 'bg-gray-100 text-gray-700';
 };
 
-// Friendly chip label (tolerates DB + legacy UI values)
+
 const statusLabel = (sRaw) => {
   const s = normStatus(sRaw);
   const map = {
     pending: 'Pending',
     reviewed: 'Reviewed',
-    referred: 'In Progress', // DB value
+    referred: 'In Progress',
     closed: 'Closed',
-    // tolerate legacy UI values if they appear
+   
     'in-progress': 'In Progress',
     resolved: 'Closed',
     new: 'Pending',
@@ -97,33 +92,83 @@ const statusLabel = (sRaw) => {
   return map[s] || (sRaw ? String(sRaw).replace('_', ' ') : '—');
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Component
-// ──────────────────────────────────────────────────────────────────────────────
+
+const getNgoDisplayName = (p) => {
+  if (!p) return 'NGO Partner Portal';
+  return (
+    p.display_name ||
+    p.org_name ||
+    p.organization ||
+    p.ngo_name ||
+    p.name ||
+    p.username ||
+    p.email ||
+    'NGO Partner'
+  );
+};
+
+
 const NGODashboard = () => {
   const navigate = useNavigate();
 
-  // Stats (from /ngo/reports)
+ 
+  const [ngoProfile, setNgoProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+ 
   const [loadingStats, setLoadingStats] = useState(true);
   const [stats, setStats] = useState(null);
   const [statsError, setStatsError] = useState(null);
 
-  // Cases table
+
   const [rows, setRows] = useState([]);
   const [loadingRows, setLoadingRows] = useState(true);
   const [rowsError, setRowsError] = useState(null);
 
-  // Filters + pagination
+ 
   const [status, setStatus] = useState('');
   const [type, setType] = useState('');
   const [priority, setPriority] = useState('');
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
 
-  // For disabling a single row while updating
+  
   const [updatingUuid, setUpdatingUuid] = useState(null);
 
-  // ── Fetch KPI stats
+  
+  const [exporting, setExporting] = useState(false);
+
+  
+  const fetchNgoProfile = async () => {
+    try {
+      setLoadingProfile(true);
+      let profile = null;
+
+      // Try API first
+      try {
+        const res = await ngoAPI.getProfile();
+        profile = res?.data?.profile || res?.data?.ngo || res?.data || null;
+      } catch (e) {
+        if (DEBUG) console.warn('[NGO] /ngo/profile failed, will try localStorage.', e?.message);
+      }
+
+      // Fallback to localStorage
+      if (!profile) {
+        const raw = localStorage.getItem('user');
+        if (raw) {
+          try {
+            profile = JSON.parse(raw);
+          } catch {
+          }
+        }
+      }
+
+      setNgoProfile(profile);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
   const fetchStats = async () => {
     try {
       setLoadingStats(true);
@@ -138,7 +183,7 @@ const NGODashboard = () => {
     }
   };
 
-  // ── Fetch cases for table
+ 
   const fetchCases = async () => {
     try {
       setLoadingRows(true);
@@ -147,7 +192,7 @@ const NGODashboard = () => {
       const params = {
         limit: PAGE_SIZE,
         offset: page * PAGE_SIZE,
-        page: page + 1, // harmless if backend ignores it; helpful if it expects page
+        page: page + 1, 
       };
       if (status) params.status = status;
       if (type) params.type = type;
@@ -169,15 +214,17 @@ const NGODashboard = () => {
   };
 
   useEffect(() => {
+    fetchNgoProfile(); 
     fetchStats();
   }, []);
 
   useEffect(() => {
     fetchCases();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, status, type, priority]);
 
-  // Derived KPI values
+  const ngoDisplayName = useMemo(() => getNgoDisplayName(ngoProfile), [ngoProfile]);
+
+ 
   const totalCases = stats?.summary?.total_cases || 0;
   const pendingCases =
     stats?.cases_by_status?.find((s) => normStatus(s.status) === 'pending')?.count || 0;
@@ -186,20 +233,105 @@ const NGODashboard = () => {
       ['closed', 'resolved'].includes(normStatus(s.status))
     )?.count || 0;
 
-  // ── Update status (PUT /ngo/cases/:id) using uuid as :id
+  
   const onUpdateStatus = async (uuid, newStatusDb) => {
-    // Optimistic UI: reflect immediately in table
+   
     setRows((cur) => cur.map((r) => (r.uuid === uuid ? { ...r, status: newStatusDb } : r)));
     setUpdatingUuid(uuid);
 
     try {
       await ngoAPI.updateCaseStatus(uuid, { status: newStatusDb });
-      // Optionally: await fetchCases(); // to fully re-sync
+      
     } catch (e) {
-      await fetchCases(); // revert on error by refetching
+      await fetchCases(); 
       alert(e?.response?.data?.message || 'Failed to update status.');
     } finally {
       setUpdatingUuid(null);
+    }
+  };
+
+  
+  const handleExportCasesCsv = async () => {
+    try {
+      setExporting(true);
+
+      
+      const collected = [];
+      const LIMIT = 200;     // per request
+      const MAX_PAGES = 200; // safety cap (≈ 40k rows)
+      let pageIdx = 0;
+
+      while (pageIdx < MAX_PAGES) {
+        const params = {
+          limit: LIMIT,
+          offset: pageIdx * LIMIT,
+          page: pageIdx + 1,
+        };
+        if (status) params.status = status;
+        if (type) params.type = type;
+        if (priority) params.priority = priority;
+
+        const res = await ngoAPI.getCases(params);
+        const list = extractList(res?.data);
+        collected.push(...list);
+
+        if (list.length < LIMIT) break; // last page
+        pageIdx += 1;
+      }
+
+      if (collected.length === 0) {
+        alert('No rows to export for the current filters.');
+        return;
+      }
+
+      // Build CSV
+      const headings = [
+        'uuid',
+        'type',
+        'status',
+        'priority',
+        'date_submitted',
+        'submitted_by',
+        'is_anonymous',
+        'file_count',
+        'notification_count',
+      ];
+
+      const csv = [
+        headings.join(','),
+        ...collected.map((r) => [
+          r.uuid ?? '',
+          r.type ?? '',
+          r.status ?? '',
+          r.priority ?? '',
+          r.date_submitted ?? '',
+          r.submitted_by ?? (r.is_anonymous ? 'Anonymous' : ''),
+          (r.is_anonymous === 1 || r.is_anonymous === true || r.is_anonymous === '1') ? '1' : '0',
+          (r.file_count ?? 0).toString(),
+          (r.notification_count ?? 0).toString(),
+        ].map((v) => {
+          const s = String(v ?? '');
+          const esc = s.replace(/"/g, '""');
+          // Quote if it contains comma, quote or newline
+          return /[",\n]/.test(esc) ? `"${esc}"` : esc;
+        }).join(','))
+      ].join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `ngo-cases-${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('[Export CSV] error:', err);
+      alert(err?.message || 'Export failed. Please try again.');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -212,25 +344,41 @@ const NGODashboard = () => {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-800">NGO Partner Portal</h1>
+            {/* 👇 Replaced static title with NGO username/display name */}
+            <h1 className="text-2xl font-semibold text-gray-800">
+              {loadingProfile ? '—' : ngoDisplayName}
+            </h1>
             <p className="text-sm text-gray-500 mt-1">
               Manage incoming cases and monitor community impact.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <button
+              onClick={() => navigate('/ngo/reports')}
+              className="px-4 py-2 bg-yellow-600 border border-gray-300 rounded-lg text-gray-700 hover:bg-yellow-450 transition-colors flex items-center gap-2"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               View Reports
             </button>
-            <button className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors flex items-center gap-2">
+            {/* Export CSV */}
+            <button
+              onClick={handleExportCasesCsv}
+              disabled={exporting}
+              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 border ${
+                exporting
+                  ? 'bg-green-600 text-white border-green-300 cursor-wait'
+                  : 'bg-green-500 text-white border-green-300 hover:bg-green-400'
+              }`}
+              title="Export filtered cases as CSV"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Export Data
+              {exporting ? 'Exporting…' : 'Export Data'}
             </button>
           </div>
         </div>

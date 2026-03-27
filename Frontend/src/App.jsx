@@ -10,6 +10,7 @@ import Footer from './Components/Footer';
 import HomePage from './Components/Home/HomePage';
 import NgoDashboard from './Pages/ngo/NgoDashboard';
 import NGOCaseDetails from './Pages/ngo/NgoCaseDetails';
+import NGOReports from './Pages/ngo/NGOReports';
 import AiSupportChat from "./Pages/AiSupportChat";
 import Cases from './Pages/Cases';
 
@@ -53,8 +54,8 @@ function App() {
                     />
 
                     <Route path="/submit-case" element={<SubmitCase />} />
-
                     <Route path="/ngo/cases/:uuid" element={<NGOCaseDetails />} />
+                    <Route path="/ngo/reports" element={<NGOReports />} />
 
                     {/* NGO dashboard */}
                     <Route
