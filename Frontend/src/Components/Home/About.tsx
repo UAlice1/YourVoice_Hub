@@ -48,10 +48,10 @@ const impact = [
 ];
 
 const features = [
-  { icon: "🌿", title: "AI Guidance", body: "Virtual psychologist covering ~80% of initial user needs with culturally sensitive NLP support." },
-  { icon: "🔒", title: "Secure Case Submission", body: "Submit text, audio, photos, or documents confidentially with end-to-end encryption." },
-  { icon: "🏥", title: "Direct Referral System", body: "Automatically routes urgent cases to Isange One Stop Center and trusted NGO partners." },
-  { icon: "♿", title: "Inclusive Access", body: "Designed for persons with disabilities, rural communities, and low-literacy users across Rwanda." },
+  { icon: "", title: "AI Guidance", body: "Virtual psychologist covering ~80% of initial user needs with culturally sensitive NLP support." },
+  { icon: "", title: "Secure Case Submission", body: "Submit text, audio, photos, or documents confidentially with end-to-end encryption." },
+  { icon: "", title: "Direct Referral System", body: "Automatically routes urgent cases to Isange One Stop Center and trusted NGO partners." },
+  { icon: "", title: "Inclusive Access", body: "Designed for persons with disabilities, rural communities, and low-literacy users across Rwanda." },
 ];
 
 const stack = [

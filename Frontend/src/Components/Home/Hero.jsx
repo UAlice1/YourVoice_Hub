@@ -214,7 +214,7 @@ export default function HeroSection() {
 
           {/* CTAs */}
           <div style={{ ...anim(550), display: "flex", flexWrap: "wrap", gap: 16 }}>
-            <a href="/get-support" style={{
+            <a href="/AiSupportChat" style={{
               padding: "18px 36px",
               borderRadius: 16,
               background: "linear-gradient(135deg, #0f4c75, #2dd4bf)",
