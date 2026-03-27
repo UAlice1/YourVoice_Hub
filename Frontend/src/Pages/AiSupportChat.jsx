@@ -23,7 +23,7 @@ function TypingDots() {
       {[0, 1, 2].map(i => (
         <span key={i} style={{
           display: "block", width: 7, height: 7, borderRadius: "50%",
-          background: "#a0a0b0",
+          background: "#555570",
           animation: `blink 1.3s infinite ${i * 0.22}s`,
         }} />
       ))}
@@ -57,17 +57,17 @@ function MessageBubble({ msg }) {
         <span style={{ fontSize: 12, fontWeight: 600, color: isUser ? "#19c37d" : "#ab68ff" }}>
           {isUser ? "You" : "Amina"}
         </span>
-        <span style={{ fontSize: 11, color: "#b0b0be" }}>{msg.time}</span>
+        <span style={{ fontSize: 11, color: "#555570" }}>{msg.time}</span>
       </div>
       <div style={{
         maxWidth: "82%",
         padding: "10px 15px",
         borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-        background: isUser ? "#19c37d" : "#f4f4f8",
-        color: isUser ? "#fff" : "#1a1a2e",
+        background: isUser ? "#19c37d" : "#1a1a2e",
+        color: isUser ? "#fff" : "#e0e0f0",
         fontSize: 14.5, lineHeight: 1.65,
         whiteSpace: "pre-wrap", wordBreak: "break-word",
-        border: isUser ? "none" : "1px solid #e8e8f0",
+        border: isUser ? "none" : "1px solid #2a2a42",
       }}>
         {msg.content}
       </div>
@@ -98,10 +98,10 @@ function WelcomeScreen({ onMood, moodUsed, onChip, isMobile }) {
         </div>
         <div style={{ textAlign: "center" }}>
           <h1 style={{
-            margin: 0, fontSize: isMobile ? 22 : 26, fontWeight: 600, color: "#1a1a2e",
+            margin: 0, fontSize: isMobile ? 22 : 26, fontWeight: 600, color: "#f0f0ff",
             fontFamily: "'Sora', sans-serif", letterSpacing: -0.4,
           }}>Hi, I'm Amina</h1>
-          <p style={{ margin: "6px 0 0", fontSize: isMobile ? 13.5 : 15, color: "#6b7280", lineHeight: 1.5 }}>
+          <p style={{ margin: "6px 0 0", fontSize: isMobile ? 13.5 : 15, color: "#8888aa", lineHeight: 1.5 }}>
             Your confidential AI support counselor at YourVoice Hub
           </p>
         </div>
@@ -109,18 +109,18 @@ function WelcomeScreen({ onMood, moodUsed, onChip, isMobile }) {
 
       {!moodUsed && (
         <div style={{ width: "100%", maxWidth: 480, textAlign: "center" }}>
-          <p style={{ fontSize: 13.5, color: "#6b7280", marginBottom: 12 }}>How are you feeling right now?</p>
+          <p style={{ fontSize: 13.5, color: "#8888aa", marginBottom: 12 }}>How are you feeling right now?</p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
             {MOODS.map(m => (
               <button key={m} onClick={() => onMood(m)} style={{
                 padding: "8px 18px", borderRadius: 999,
-                background: "#fff", border: "1px solid #e0e0ef",
-                color: "#1a1a2e", fontSize: 13.5, cursor: "pointer",
+                background: "#111120", border: "1px solid #2a2a42",
+                color: "#e0e0f0", fontSize: 13.5, cursor: "pointer",
                 transition: "all 0.16s ease", fontFamily: "inherit",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
               }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(171,104,255,0.08)"; e.currentTarget.style.borderColor = "rgba(171,104,255,0.5)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e0e0ef"; }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(171,104,255,0.12)"; e.currentTarget.style.borderColor = "rgba(171,104,255,0.5)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#111120"; e.currentTarget.style.borderColor = "#2a2a42"; }}
               >{m}</button>
             ))}
           </div>
@@ -128,7 +128,7 @@ function WelcomeScreen({ onMood, moodUsed, onChip, isMobile }) {
       )}
 
       <div style={{ width: "100%", maxWidth: 600 }}>
-        <p style={{ fontSize: 13, color: "#9ca3af", marginBottom: 10, textAlign: "center" }}>Or start with a topic</p>
+        <p style={{ fontSize: 13, color: "#555570", marginBottom: 10, textAlign: "center" }}>Or start with a topic</p>
         <div style={{
           display: "grid",
           gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
@@ -137,14 +137,14 @@ function WelcomeScreen({ onMood, moodUsed, onChip, isMobile }) {
           {QUICK_CHIPS.slice(0, isMobile ? 4 : 6).map(chip => (
             <button key={chip.label} onClick={() => onChip(chip.text)} style={{
               padding: "12px 16px", borderRadius: 12,
-              background: "#fff", border: "1px solid #e8e8f0",
-              color: "#374151", fontSize: 13.5, cursor: "pointer",
+              background: "#111120", border: "1px solid #2a2a42",
+              color: "#c0c0e0", fontSize: 13.5, cursor: "pointer",
               textAlign: "left", lineHeight: 1.4,
               transition: "all 0.16s ease", fontFamily: "inherit",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
             }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#f9f9ff"; e.currentTarget.style.borderColor = "#c4b5fd"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e8e8f0"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#18182e"; e.currentTarget.style.borderColor = "#6040a0"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#111120"; e.currentTarget.style.borderColor = "#2a2a42"; }}
             >{chip.label}</button>
           ))}
         </div>
@@ -156,18 +156,18 @@ function WelcomeScreen({ onMood, moodUsed, onChip, isMobile }) {
 function Sidebar({ onNewSession, hasMessages, onClose, isMobile }) {
   return (
     <div style={{
-      width: "100%", background: "#fff",
+      width: "100%", background: "#0a0a14",
       display: "flex", flexDirection: "column",
-      borderRight: isMobile ? "none" : "1px solid #e8e8f0",
+      borderRight: isMobile ? "none" : "1px solid #1e1e30",
       height: "100%",
     }}>
-      <div style={{ padding: "18px 16px 12px", borderBottom: "1px solid #e8e8f0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ padding: "18px 16px 12px", borderBottom: "1px solid #1e1e30", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, #ab68ff, #19c37d)", flexShrink: 0 }} />
-          <span style={{ fontSize: 14, fontWeight: 600, color: "#1a1a2e", letterSpacing: -0.2 }}>YourVoice Hub</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#e0e0f0", letterSpacing: -0.2 }}>YourVoice Hub</span>
         </div>
         {isMobile && (
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 4, display: "flex" }}>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#8888aa", padding: 4, display: "flex" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12"/>
             </svg>
@@ -179,11 +179,11 @@ function Sidebar({ onNewSession, hasMessages, onClose, isMobile }) {
         <button onClick={() => { onNewSession(); if (isMobile) onClose(); }} style={{
           width: "100%", display: "flex", alignItems: "center", gap: 10,
           padding: "10px 12px", borderRadius: 8, border: "none",
-          background: "transparent", color: "#6b7280",
+          background: "transparent", color: "#8888aa",
           fontSize: 13.5, cursor: "pointer", transition: "all 0.15s", fontFamily: "inherit",
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = "#f4f4f8"; e.currentTarget.style.color = "#1a1a2e"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#6b7280"; }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#141428"; e.currentTarget.style.color = "#e0e0f0"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#8888aa"; }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 5v14M5 12h14"/>
@@ -194,21 +194,21 @@ function Sidebar({ onNewSession, hasMessages, onClose, isMobile }) {
 
       <div style={{ padding: "0 8px", flex: 1 }}>
         {hasMessages && (
-          <div style={{ padding: "8px 12px", borderRadius: 8, background: "#f4f4f8", border: "1px solid #e8e8f0" }}>
-            <p style={{ margin: 0, fontSize: 12, color: "#9ca3af" }}>Current session</p>
-            <p style={{ margin: "2px 0 0", fontSize: 13, color: "#1a1a2e" }}>Active conversation</p>
+          <div style={{ padding: "8px 12px", borderRadius: 8, background: "#141428", border: "1px solid #1e1e30" }}>
+            <p style={{ margin: 0, fontSize: 12, color: "#555570" }}>Current session</p>
+            <p style={{ margin: "2px 0 0", fontSize: 13, color: "#e0e0f0" }}>Active conversation</p>
           </div>
         )}
       </div>
 
-      <div style={{ padding: "12px 16px", borderTop: "1px solid #e8e8f0" }}>
+      <div style={{ padding: "12px 16px", borderTop: "1px solid #1e1e30" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#19c37d", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>Y</span>
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 12.5, color: "#1a1a2e", fontWeight: 500 }}>Anonymous user</p>
-            <p style={{ margin: 0, fontSize: 11, color: "#9ca3af" }}>
+            <p style={{ margin: 0, fontSize: 12.5, color: "#e0e0f0", fontWeight: 500 }}>Anonymous user</p>
+            <p style={{ margin: 0, fontSize: 11, color: "#555570" }}>
               <span style={{ color: "#19c37d" }}>●</span> Private & encrypted
             </p>
           </div>
@@ -252,7 +252,7 @@ export default function AiSupportChat() {
 const callAmina = async (userText, updatedHistory) => {
   setLoading(true);
   try {
-    const res = await fetch(`${API_URL}/ai/chat`, {  // 👈 removed /api here
+    const res = await fetch(`${API_URL}/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: userText, session_id: sessionId, history: updatedHistory }),
@@ -264,7 +264,7 @@ const callAmina = async (userText, updatedHistory) => {
     const assistantMsg = { role: "assistant", content: reply, time: getTime() };
     setHistory(prev => [...prev, { role: "assistant", content: reply }]);
     setMessages(prev => [...prev, assistantMsg]);
-    if (data?.data?.intent === "crisis") {  // 👈 also fixed intent path
+    if (data?.data?.intent === "crisis") {
       setMessages(prev => [...prev, {
         role: "assistant",
         content: "If you are in immediate danger, please call the Isange One Stop Center at 116 (toll-free in Rwanda). You are not alone.",
@@ -321,23 +321,24 @@ const callAmina = async (userText, updatedHistory) => {
           from{ opacity:0; } to{ opacity:1; }
         }
         * { box-sizing: border-box; }
-        body { margin: 0; background: #f7f7fb; }
+        body { margin: 0; background: #08080f; }
         .yvh-root { font-family: 'Sora', -apple-system, sans-serif; }
         .yvh-scrollbar::-webkit-scrollbar{ width:4px; }
-        .yvh-scrollbar::-webkit-scrollbar-thumb{ background:rgba(0,0,0,0.1); border-radius:4px; }
+        .yvh-scrollbar::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.08); border-radius:4px; }
         .yvh-scrollbar::-webkit-scrollbar-track{ background:transparent; }
         .yvh-input:focus{ outline:none; }
-        .yvh-send:hover:not(:disabled){ background:rgba(0,0,0,0.07) !important; }
+        .yvh-input::placeholder{ color:#555570; }
+        .yvh-send:hover:not(:disabled){ background:rgba(255,255,255,0.08) !important; }
         .yvh-send:disabled{ opacity:0.3; cursor:not-allowed; }
         .yvh-chip-scroll::-webkit-scrollbar{ display:none; }
         .yvh-overlay{
-          position:fixed; inset:0; background:rgba(0,0,0,0.3);
+          position:fixed; inset:0; background:rgba(0,0,0,0.6);
           z-index:40; animation:fadeIn 0.2s ease;
         }
         .yvh-drawer{
           position:fixed; top:0; left:0; bottom:0; width:280px;
           z-index:50; animation:slideIn 0.25s ease;
-          box-shadow:4px 0 20px rgba(0,0,0,0.1);
+          box-shadow:4px 0 20px rgba(0,0,0,0.5);
         }
       `}</style>
 
@@ -351,7 +352,7 @@ const callAmina = async (userText, updatedHistory) => {
         </>
       )}
 
-      <div className="yvh-root" style={{ height: "100vh", background: "#f7f7fb", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="yvh-root" style={{ height: "100vh", background: "#08080f", display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
           {/* Desktop sidebar */}
@@ -362,25 +363,25 @@ const callAmina = async (userText, updatedHistory) => {
           )}
 
           {/* Main */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#fff" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#0d0d1a" }}>
 
             {/* Mobile top bar */}
             {isMobile && (
               <div style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "12px 16px", borderBottom: "1px solid #e8e8f0",
-                background: "#fff", flexShrink: 0,
+                padding: "12px 16px", borderBottom: "1px solid #1e1e30",
+                background: "#0d0d1a", flexShrink: 0,
               }}>
-                <button onClick={() => setSidebarOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 4, display: "flex" }}>
+                <button onClick={() => setSidebarOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8888aa", padding: 4, display: "flex" }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M3 12h18M3 6h18M3 18h18"/>
                   </svg>
                 </button>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{ width: 22, height: 22, borderRadius: "50%", background: "linear-gradient(135deg, #ab68ff, #19c37d)" }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: "#1a1a2e" }}>YourVoice Hub</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: "#e0e0f0" }}>YourVoice Hub</span>
                 </div>
-                <button onClick={resetSession} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 4, display: "flex" }}>
+                <button onClick={resetSession} style={{ background: "none", border: "none", cursor: "pointer", color: "#8888aa", padding: 4, display: "flex" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M12 5v14M5 12h14"/>
                   </svg>
@@ -389,7 +390,7 @@ const callAmina = async (userText, updatedHistory) => {
             )}
 
             {/* Messages / welcome */}
-            <div className="yvh-scrollbar" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", background: "#fff" }}>
+            <div className="yvh-scrollbar" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", background: "#0d0d1a" }}>
               {!hasMessages ? (
                 <WelcomeScreen onMood={pickMood} moodUsed={moodUsed} onChip={sendMessage} isMobile={isMobile} />
               ) : (
@@ -403,7 +404,7 @@ const callAmina = async (userText, updatedHistory) => {
                         </div>
                         <span style={{ fontSize: 12, fontWeight: 600, color: "#ab68ff" }}>Amina</span>
                       </div>
-                      <div style={{ padding: "10px 15px", borderRadius: "18px 18px 18px 4px", background: "#f4f4f8", border: "1px solid #e8e8f0" }}>
+                      <div style={{ padding: "10px 15px", borderRadius: "18px 18px 18px 4px", background: "#1a1a2e", border: "1px solid #2a2a42" }}>
                         <TypingDots />
                       </div>
                     </div>
@@ -421,20 +422,20 @@ const callAmina = async (userText, updatedHistory) => {
               maxWidth: 720, width: "100%", margin: "0 auto",
               alignSelf: "stretch",
               display: "flex", flexDirection: "column", gap: 8,
-              background: "#fff",
-              borderTop: hasMessages ? "1px solid #e8e8f0" : "none",
+              background: "#0d0d1a",
+              borderTop: hasMessages ? "1px solid #1e1e30" : "none",
             }}>
               {hasMessages && (
                 <div className="yvh-chip-scroll" style={{ display: "flex", gap: 7, overflowX: "auto", scrollbarWidth: "none", paddingTop: 4 }}>
                   {QUICK_CHIPS.map(chip => (
                     <button key={chip.label} disabled={loading} onClick={() => sendMessage(chip.text)} style={{
                       flexShrink: 0, padding: "5px 12px", borderRadius: 999,
-                      background: "#f4f4f8", border: "1px solid #e0e0ef",
-                      color: "#6b7280", fontSize: 12, cursor: "pointer",
+                      background: "#141428", border: "1px solid #2a2a42",
+                      color: "#8888aa", fontSize: 12, cursor: "pointer",
                       transition: "all 0.15s", whiteSpace: "nowrap", fontFamily: "inherit",
                     }}
-                      onMouseEnter={e => { e.currentTarget.style.color = "#1a1a2e"; e.currentTarget.style.borderColor = "#c4b5fd"; e.currentTarget.style.background = "#f0ecff"; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = "#6b7280"; e.currentTarget.style.borderColor = "#e0e0ef"; e.currentTarget.style.background = "#f4f4f8"; }}
+                      onMouseEnter={e => { e.currentTarget.style.color = "#e0e0f0"; e.currentTarget.style.borderColor = "#6040a0"; e.currentTarget.style.background = "#1e1840"; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = "#8888aa"; e.currentTarget.style.borderColor = "#2a2a42"; e.currentTarget.style.background = "#141428"; }}
                     >{chip.label}</button>
                   ))}
                 </div>
@@ -442,7 +443,7 @@ const callAmina = async (userText, updatedHistory) => {
 
               <div style={{
                 display: "flex", alignItems: "flex-end", gap: 8,
-                background: "#f7f7fb", border: "1px solid #e0e0ef",
+                background: "#111120", border: "1px solid #2a2a42",
                 borderRadius: 16, padding: isMobile ? "10px 12px" : "12px 14px",
                 transition: "border-color 0.15s",
               }}>
@@ -457,7 +458,7 @@ const callAmina = async (userText, updatedHistory) => {
                   placeholder={isMobile ? "Share what's on your mind…" : "Share what's on your mind — English or Kinyarwanda"}
                   style={{
                     flex: 1, background: "none", border: "none", outline: "none",
-                    color: "#1a1a2e", fontSize: isMobile ? 14 : 15, lineHeight: 1.6,
+                    color: "#e0e0f0", fontSize: isMobile ? 14 : 15, lineHeight: 1.6,
                     resize: "none", fontFamily: "inherit", minHeight: 24, maxHeight: 140,
                   }}
                 />
@@ -467,7 +468,7 @@ const callAmina = async (userText, updatedHistory) => {
                   disabled={loading || !input.trim()}
                   style={{
                     width: 34, height: 34, borderRadius: 8, flexShrink: 0,
-                    background: input.trim() && !loading ? "rgba(0,0,0,0.06)" : "transparent",
+                    background: input.trim() && !loading ? "rgba(255,255,255,0.08)" : "transparent",
                     border: "none", cursor: "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.15s",
@@ -475,13 +476,13 @@ const callAmina = async (userText, updatedHistory) => {
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z"
-                      stroke={input.trim() && !loading ? "#1a1a2e" : "#c0c0d0"}
+                      stroke={input.trim() && !loading ? "#e0e0f0" : "#333355"}
                       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>
               </div>
 
-              <p style={{ fontSize: isMobile ? 10.5 : 11.5, color: "#9ca3af", textAlign: "center", margin: 0 }}>
+              <p style={{ fontSize: isMobile ? 10.5 : 11.5, color: "#555570", textAlign: "center", margin: 0 }}>
                 {isMobile
                   ? "Anonymous · Encrypted · Tap send or press Enter"
                   : "End-to-end encrypted · Anonymous session · Enter to send · Shift+Enter for new line"}
